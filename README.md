@@ -1,40 +1,40 @@
-# Parsing HTML with PHP
+# PHPでのHTMLパース
 
-[![Promo](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.com/) 
+[![Promo](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.jp/) 
 
-This guide examines three PHP HTML parsing techniques and compares their strengths and differences:
+本ガイドでは、PHPでHTMLをパースする3つのテクニックを検証し、それぞれの強みと違いを比較します。
 
-- [Parsing HTML with PHP](#parsing-html-with-php)
-- [Why Parse HTML in PHP?](#why-parse-html-in-php)
-- [Prerequisites](#prerequisites)
-- [HTML Retrieval in PHP](#html-retrieval-in-php)
-- [HTML Parsing in PHP: 3 Approaches](#html-parsing-in-php-3-approaches)
-  - [Approach #1: With `Dom\HTMLDocument`](#approach-1-with-domhtmldocument)
-  - [Approach #2: Using Simple HTML DOM Parser](#approach-2-using-simple-html-dom-parser)
-  - [Approach #3: Using Symfony’s DomCrawler Component](#approach-3-using-symfonys-domcrawler-component)
-- [Parsing HTML in PHP: Comparison Table](#parsing-html-in-php-comparison-table)
-- [Conclusion](#conclusion)
+- [PHPでのHTMLパース](#parsing-html-with-php)
+- [なぜPHPでHTMLをパースするのか？](#why-parse-html-in-php)
+- [前提条件](#prerequisites)
+- [PHPでのHTML取得](#html-retrieval-in-php)
+- [PHPでのHTMLパース：3つのアプローチ](#html-parsing-in-php-3-approaches)
+  - [アプローチ #1：`Dom\HTMLDocument`を使用](#approach-1-with-domhtmldocument)
+  - [アプローチ #2：Simple HTML DOM Parserを使用](#approach-2-using-simple-html-dom-parser)
+  - [アプローチ #3：SymfonyのDomCrawlerコンポーネントを使用](#approach-3-using-symfonys-domcrawler-component)
+- [PHPでのHTMLパース：比較表](#parsing-html-in-php-comparison-table)
+- [結論](#conclusion)
 
-## Why Parse HTML in PHP?
+## なぜPHPでHTMLをパースするのか？
 
-HTML Parsing in PHP involves converting HTML content into its DOM ([Document Object Model](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)) structure. Once in the DOM format, you can easily navigate and manipulate the HTML content.
+PHPでのHTMLパースとは、HTMLコンテンツをDOM（[Document Object Model](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)）構造に変換することです。DOM形式になれば、HTMLコンテンツのナビゲーションや操作を簡単に行えます。
 
-In particular, the top reasons to parse HTML in PHP are:
+特に、PHPでHTMLをパースする主な理由は次のとおりです。
 
-- **Data extraction**: Retrieve specific content from web pages, including text or attributes from HTML elements.  
-- **Automation**: Streamline tasks such as content scraping, reporting, and data aggregation from HTML.  
-- **Server-side HTML handling**: Parse and manipulate HTML to clean, format, or modify web content before rendering it in your application.  
+- **データ抽出**：HTML要素のテキストや属性など、Webページから特定のコンテンツを取得します。  
+- **自動化**：コンテンツのスクレイピング、レポート作成、HTMLからのデータ集約といったタスクを効率化します。  
+- **サーバーサイドでのHTML処理**：アプリケーションでレンダリングする前に、HTMLをパースしてクリーンアップ、整形、変更します。  
 
 
-## Prerequisites
+## 前提条件
 
-Before you start coding, make sure you have [PHP 8.4+](https://www.php.net/releases/8.4/en.php) installed on your machine. You can verify this by running the following command:
+コーディングを始める前に、マシンに[PHP 8.4+](https://www.php.net/releases/8.4/en.php)がインストールされていることを確認してください。以下のコマンドを実行すると確認できます。
 
 ```bash
 php -v
 ```
 
-The output should look something like this:
+出力は次のようになります。
 
 ```
 PHP 8.4.3 (cli) (built: Jan 19 2025 14:20:58) (NTS)
@@ -43,25 +43,25 @@ Zend Engine v4.4.3, Copyright (c) Zend Technologies
     with Zend OPcache v8.4.3, Copyright (c), by Zend Technologies
 ```
 
-Next, initialize a Composer project to make dependency management easier. If Composer is not installed on your system, [download it](https://getcomposer.org/download/) and follow the installation instructions.
+次に、依存関係の管理を簡単にするためにComposerプロジェクトを初期化します。Composerがシステムにインストールされていない場合は、[ダウンロード](https://getcomposer.org/download/)してインストール手順に従ってください。
 
-First, create a new folder for your PHP HTML project:
+まず、PHPのHTMLプロジェクト用に新しいフォルダを作成します。
 
 ```bash
 mkdir php-html-parser
 ```
 
-Navigate to the folder in your terminal and initialize a Composer project inside it using the `composer init` command:
+ターミナルでそのフォルダに移動し、`composer init`コマンドで中にComposerプロジェクトを初期化します。
 
 ```bash
 composer init
 ```
 
-During this process, you'll be asked a few questions. The default answers are sufficient, but you can provide more specific details to tailor the setup for your PHP HTML parsing project if needed.
+このプロセスではいくつか質問されます。デフォルトの回答で問題ありませんが、必要に応じて、PHPのHTMLパースプロジェクトに合わせてより具体的な内容を指定することもできます。
 
-Next, open the project folder in your favorite IDE. [Visual Studio Code with the PHP extension](https://code.visualstudio.com/docs/languages/php) or [IntelliJ WebStorm](https://www.jetbrains.com/webstorm/) are good choices for PHP development.
+次に、お好みのIDEでプロジェクトフォルダを開きます。PHP開発には、[PHP拡張機能付きVisual Studio Code](https://code.visualstudio.com/docs/languages/php)または[IntelliJ WebStorm](https://www.jetbrains.com/webstorm/)が良い選択肢です。
 
-Now, add an empty `index.php` file to the project folder. Your project structure should now look like this:
+続いて、プロジェクトフォルダに空の`index.php`ファイルを追加します。プロジェクト構成は次のようになります。
 
 ```
 php-html-parser/
@@ -70,7 +70,7 @@ php-html-parser/
   └── index.php
 ```
 
-Open `index.php` and add the following code to initialize your project:
+`index.php`を開き、プロジェクトを初期化するために次のコードを追加してください。
 
 ```php
 <?php
@@ -80,25 +80,25 @@ require_once __DIR__ . "/vendor/autoload.php";
 // scraping logic...
 ```
 
-Run your script with this command:
+次のコマンドでスクリプトを実行します。
 
 ```bash
 php index.php
 ```
 
-## HTML Retrieval in PHP
+## PHPでのHTML取得
 
-Before parsing HTML in PHP, you need some HTML to parse. In this section, we will see two different approaches to accessing HTML content in PHP. We suggest to read our [guide on web scraping with PHP](https://brightdata.com/blog/how-tos/web-scraping-php) too.
+PHPでHTMLをパースする前に、パースするHTMLが必要です。本セクションでは、PHPでHTMLコンテンツにアクセスする2つの異なるアプローチを見ていきます。あわせて、[PHPでのWebスクレイピングガイド](https://brightdata.jp/blog/how-tos/web-scraping-php)も読むことをおすすめします。
 
-### With CURL
+### CURLを使用する
 
-PHP natively supports cURL, a popular HTTP client used to perform HTTP requests. [Enable the cURL extension](https://www.php.net/manual/en/book.curl.php) or install it on Ubuntu Linux with:
+PHPは、HTTPリクエストを実行するために一般的に使われるHTTPクライアントであるcURLをネイティブでサポートしています。[cURL拡張を有効化](https://www.php.net/manual/en/book.curl.php)するか、Ubuntu Linuxでは次のコマンドでインストールしてください。
 
 ```bash
 sudo apt-get install php8.4-curl
 ```
 
-You can use cURL to send an HTTP GET request to an online server and retrieve the HTML document returned by the server. This example script makes a simple GET request and retrieves HTML content:
+cURLを使用すると、オンラインサーバーへHTTP GETリクエストを送信し、サーバーから返されるHTMLドキュメントを取得できます。次の例のスクリプトは、シンプルなGETリクエストを行い、HTMLコンテンツを取得します。
 
 ```bash
 // initialize cURL session
@@ -120,7 +120,7 @@ curl_close($ch);
 echo $html;
 ```
 
-Add the above code snippet to `index.php` and launch it. It will produce the following HTML code:
+上記のコードスニペットを`index.php`に追加して実行してください。次のHTMLコードが生成されます。
 
 ```html
 <!doctype html>
@@ -133,25 +133,25 @@ Add the above code snippet to `index.php` and launch it. It will produce the f
 </html>
 ```
 
-### From a File
+### ファイルから取得する
 
-Let's assume you have a file named `index.html` that contains the HTML of the “Hockey Teams” page from [Scrape This Site](https://www.scrapethissite.com/pages/forms/?per_page=100), which was previously retrieved using cURL:
+cURLを使って事前に取得した、[Scrape This Site](https://www.scrapethissite.com/pages/forms/?per_page=100)の「Hockey Teams」ページのHTMLを含む`index.html`というファイルがあると仮定します。
 
 ![The index.html file in the project folder](https://github.com/luminati-io/php-html-parsing/blob/main/Images/The-index.html-file-in-the-project-folder-2048x1216.png)
 
-## HTML Parsing in PHP: 3 Approaches
+## PHPでのHTMLパース：3つのアプローチ
 
-This section explains using three different libraries to parse HTML in PHP:
+本セクションでは、PHPでHTMLをパースするために3つの異なるライブラリを使用する方法を説明します。
 
-1. Using `Dom\HTMLDocument` for vanilla PHP
-2. Using the Simple HTML DOM Parser library
-3. Using Symfony’s `DomCrawler` component
+1. 素のPHP向けに`Dom\HTMLDocument`を使用
+2. Simple HTML DOM Parserライブラリを使用
+3. Symfonyの`DomCrawler`コンポーネントを使用
 
-In all three cases, you parse the HTML from the local `index.html` file to select all hockey team entries on the page and extract data from them:
+いずれのケースでも、ローカルの`index.html`ファイルからHTMLをパースし、ページ上のすべてのホッケーチームのエントリを選択して、そこからデータを抽出します。
 
 ![The table on the target page](https://github.com/luminati-io/php-html-parsing/blob/main/Images/The-table-on-the-target-page-2048x1107.png)
 
-The final result will be a list of scraped hockey team entries containing the following details:
+最終結果は、次の詳細を含むスクレイピング済みホッケーチームのエントリ一覧になります。
 
 - Team Name
 - Year
@@ -162,43 +162,43 @@ The final result will be a list of scraped hockey team entries containing the fo
 - Goals Against (GA)
 - Goal Difference
 
-You can extract them from the HTML table with this structure:
+これらは、次の構造を持つHTMLテーブルから抽出できます。
 
 ![The HTML DOM structure of the table's rows](https://github.com/luminati-io/php-html-parsing/blob/main/Images/The-HTML-DOM-structure-of-the-tables-rows-2048x1134.png)
 
-Each column in a table row has a specific class, allowing you to extract data by selecting elements with their class as a CSS selector and retrieving their content through their text.
+テーブル行の各カラムには固有のclassが付いており、classをCSSセレクタとして要素を選択し、テキストとして内容を取得することでデータを抽出できます。
 
-## Approach #1: With Dom\\HTMLDocument
+## アプローチ #1：Dom\\HTMLDocumentを使用
 
-PHP 8.4+ comes with a built-in [`Dom\HTMLDocument`](https://www.php.net/manual/en/class.dom-htmldocument.php) class. This represents an HTML document and allows you to parse HTML content and navigate the DOM tree.
+PHP 8.4+ には組み込みの[`Dom\HTMLDocument`](https://www.php.net/manual/en/class.dom-htmldocument.php)クラスがあります。これはHTMLドキュメントを表し、HTMLコンテンツのパースやDOMツリーのナビゲーションを可能にします。
 
-### Step #1: Installation and Set Up
+### ステップ #1：インストールとセットアップ
 
-`Dom\HTMLDocument` is part of the [Standard PHP Library](https://www.php.net/manual/en/book.spl.php). Still, you need to enable the [DOM extension](https://www.php.net/manual/en/intro.dom.php) or install it with this Linux command to use it:
+`Dom\HTMLDocument`は[Standard PHP Library](https://www.php.net/manual/en/book.spl.php)の一部です。ただし、使用するには[DOM拡張](https://www.php.net/manual/en/intro.dom.php)を有効化するか、次のLinuxコマンドでインストールする必要があります。
 
 ```bash
 sudo apt-get install php-dom
 ```
 
-### Step #2: HTML Parsing
+### ステップ #2：HTMLパース
 
-You can parse the HTML string as below:
+HTML文字列は次のようにパースできます。
 
 ```php
 $dom = \DOM\HTMLDocument::createFromString($html);
 ```
 
-You can parse the `index.html` file with:
+`index.html`ファイルは次のようにパースできます。
 
 ```php
 $dom = \DOM\HTMLDocument::createFromFile("./index.html");
 ```
 
-`$dom` is a [`Dom\HTMLDocument`](https://www.php.net/manual/en/class.dom-htmldocument.php) object that exposes the methods you need for data parsing.
+`$dom`は[`Dom\HTMLDocument`](https://www.php.net/manual/en/class.dom-htmldocument.php)オブジェクトで、データパースに必要なメソッドが提供されます。
 
-### Step #3: Data Parsing
+### ステップ #3：データパース
 
-You can select all hockey team entries using `\DOM\HTMLDocument` with the following approach:
+次のアプローチで、`\DOM\HTMLDocument`を使ってすべてのホッケーチームのエントリを選択できます。
 
 ```php
 // select each row on the page
@@ -237,17 +237,17 @@ foreach ($rows as $row) {
 }
 ```
 
-`\DOM\HTMLDocument` does not offer advanced query methods. So you have to rely on methods like `getElementsByTagName()` and manual iteration.
+`\DOM\HTMLDocument`は高度なクエリメソッドを提供しません。そのため、`getElementsByTagName()`のようなメソッドと手動の反復処理に依存する必要があります。
 
-Here is a breakdown of the methods used:
+使用したメソッドの内訳は次のとおりです。
 
-- `getElementsByTagName()`: Retrieve all elements of a given tag (like `<table>`, `<tr>`, or `<td>`) within the document.
-- `item()`: Return an individual element from a list of elements returned by `getElementsByTagName()`.
-- `textContent`: This property gives the raw text content of an element, allowing you to extract the visible data (like the team name, year, etc.).
+- `getElementsByTagName()`：ドキュメント内の指定タグ（`<table>`、`<tr>`、`<td>`など）の全要素を取得します。
+- `item()`：`getElementsByTagName()`が返す要素リストから個別要素を返します。
+- `textContent`：要素の生のテキスト内容を返すプロパティで、表示されるデータ（チーム名、年など）を抽出できます。
 
-We also used [`trim()`](https://www.php.net/manual/en/function.trim.php) to remove extra whitespace before and after the text content for cleaner data.
+また、テキスト内容の前後にある余分な空白を取り除いてデータを整えるために、[`trim()`](https://www.php.net/manual/en/function.trim.php)も使用しました。
 
-When added to `index.php`, the above snippet will produce this result:
+上記スニペットを`index.php`に追加すると、次の結果が得られます。
 
 ```php
 Array
@@ -277,45 +277,45 @@ Array
 ) 
 ```
 
-## Approach #2: Using Simple HTML DOM Parser
+## アプローチ #2：Simple HTML DOM Parserを使用
 
-[Simple HTML DOM Parser](https://github.com/voku/simple_html_dom) is a lightweight PHP library that makes it easy to parse and manipulate HTML content.
+[Simple HTML DOM Parser](https://github.com/voku/simple_html_dom)は軽量なPHPライブラリで、HTMLコンテンツのパースと操作を簡単にします。
 
-### Step #1: Installation and Set Up
+### ステップ #1：インストールとセットアップ
 
-You can install Simple HTML Dom Parser via Composer with this command:
+次のコマンドで、Composer経由でSimple HTML Dom Parserをインストールできます。
 
 ```php
 composer require voku/simple_html_dom
 ```
 
-Alternatively, you can manually download and include the `simple_html_dom.php` file in your project.
+または、`simple_html_dom.php`ファイルを手動でダウンロードしてプロジェクトに含めることもできます。
 
-Then, import it in `index.php` with this line of code:
+次に、このコード行で`index.php`にインポートします。
 
 ```php
 use voku\helper\HtmlDomParser;
 ```
 
-### Step #2: HTML Parsing
+### ステップ #2：HTMLパース
 
-To parse an HTML string, use the `file_get_html()` method:
+HTML文字列をパースするには、`file_get_html()`メソッドを使用します。
 
 ```php
 $dom = HtmlDomParser::str_get_html($html);
 ```
 
-For parsing `index.html`, write `file_get_html()` instead:
+`index.html`をパースする場合は、代わりに`file_get_html()`を書きます。
 
 ```php
 $dom = HtmlDomParser::file_get_html($str);
 ```
 
-This will load the HTML content into a `$dom` object, which allows you to navigate the DOM easily.
+これによりHTMLコンテンツが`$dom`オブジェクトに読み込まれ、DOMを簡単に辿れるようになります。
 
-### Step #3: Data Parsing
+### ステップ #3：データパース
 
-Extract the hockey team data from the HTML using Simple HTML DOM Parser:
+Simple HTML DOM Parserを使用して、HTMLからホッケーチームのデータを抽出します。
 
 ```php
 // find all rows in the table
@@ -366,54 +366,54 @@ foreach ($rows as $row) {
 }
 ```
 
-The Simple HTML DOM Parser features used above are:
+上記で使用したSimple HTML DOM Parserの機能は次のとおりです。
 
-- `findMulti()`: Select all elements identified by the given CSS selector.
-- `findOne()`: Locate the first element matching the given CSS selector.
-- `plaintext`: An attribute to get the raw text content inside an HTML element.
+- `findMulti()`：指定したCSSセレクタで識別されるすべての要素を選択します。
+- `findOne()`：指定したCSSセレクタに一致する最初の要素を特定します。
+- `plaintext`：HTML要素内部の生のテキスト内容を取得するための属性です。
 
-This time, we applied CSS selectors with a more comprehensive and robust logic. However, the result remains the same as in the initial PHP HTML parsing approach.
+今回は、より包括的で堅牢なロジックでCSSセレクタを適用しましたが、結果は最初のPHPでのHTMLパースアプローチと同じです。
 
-## Approach #3: Using Symfony’s DomCrawler Component
+## アプローチ #3：SymfonyのDomCrawlerコンポーネントを使用
 
-[Symfony’s `DomCrawler` component](https://symfony.com/doc/current/components/dom_crawler.html) provides an easy way to parse HTML documents and extract data from them.
+[Symfonyの`DomCrawler`コンポーネント](https://symfony.com/doc/current/components/dom_crawler.html)は、HTMLドキュメントを簡単にパースし、そこからデータを抽出できるようにします。
 
 > **Note**:
-> The component is part of the [Symfony framework](https://symfony.com/) but can also be used standalone, as we will do in this section.
+> このコンポーネントは[Symfony framework](https://symfony.com/)の一部ですが、本セクションで行うようにスタンドアロンでも使用できます。
 
-### Step #1: Installation and Set Up
+### ステップ #1：インストールとセットアップ
 
-Install Symfony’s `DomCrawler` component with this Composer command:
+次のComposerコマンドでSymfonyの`DomCrawler`コンポーネントをインストールします。
 
 ```bash
 composer require symfony/dom-crawler
 ```
 
-Then, import it in the `index.php` file:
+次に、`index.php`ファイルにインポートします。
 
 ```php
 use Symfony\Component\DomCrawler\Crawler;
 ```
 
-### Step #2: HTML Parsing
+### ステップ #2：HTMLパース
 
-To parse an HTML string, create a [`Crawler`](https://github.com/symfony/symfony/blob/7.2/src/Symfony/Component/DomCrawler/Crawler.php) instance with the `html()` method:
+HTML文字列をパースするには、`html()`メソッドで[`Crawler`](https://github.com/symfony/symfony/blob/7.2/src/Symfony/Component/DomCrawler/Crawler.php)インスタンスを作成します。
 
 ```php
 $crawler = new Crawler($html);
 ```
 
-For parsing a file, use `file_get_contents()` and create the `Crawler` instance:
+ファイルをパースする場合は、`file_get_contents()`を使用して`Crawler`インスタンスを作成します。
 
 ```php
 $crawler = new Crawler(file_get_contents("./index.html"));
 ```
 
-The above lines will load the HTML content into the `$crawler` object, which provides easy methods to traverse and extract data.
+上記の行によりHTMLコンテンツが`$crawler`オブジェクトに読み込まれ、データの走査と抽出を容易にするメソッドが提供されます。
 
-### Step #3: Data Parsing
+### ステップ #3：データパース
 
-Extract the hockey team data using the `DomCrawler` component:
+`DomCrawler`コンポーネントを使用してホッケーチームのデータを抽出します。
 
 ```php
 // select all rows within the table
@@ -464,30 +464,30 @@ $rows->each(function ($row, $i) {
 });
 ```
 
-The `DomCrawler` methods used are:
+使用した`DomCrawler`のメソッドは次のとおりです。
 
-- `each()`: To iterate over a list of selected elements.
-- `filter()`: Select elements based on CSS selectors.
-- `text()`: Extract the text content of the selected elements.
+- `each()`：選択した要素のリストを反復処理します。
+- `filter()`：CSSセレクタに基づいて要素を選択します。
+- `text()`：選択した要素のテキスト内容を抽出します。
 
-## Parsing HTML in PHP: Comparison Table
+## PHPでのHTMLパース：比較表
 
-You can compare the three approaches to parsing HTML in PHP explored here in the summary table below:
+ここで取り上げたPHPでHTMLをパースする3つのアプローチを、以下のサマリ表で比較できます。
 
 |     | **\\DOM\\HTMLDocument** | **Simple HTML DOM Parser** | **Symfony’s DomCrawler** |
 | --- | --- | --- | --- |
-| **Type** | Native PHP component | External Library | Symfony Component |
+| **Type** | PHPネイティブコンポーネント | 外部ライブラリ | Symfonyコンポーネント |
 | **GitHub Stars** | —   | 880+ | 4,000+ |
 | **XPath Support** | ❌   | ✔️  | ✔️  |
 | **CSS Selector Support** | ❌   | ✔️  | ✔️  |
-| **Learning Curve** | Low | Low to Medium | Medium |
-| **Simplicity of Use** | Medium | High | High |
-| **API** | Basic | Rich | Rich |
+| **Learning Curve** | 低 | 低〜中 | 中 |
+| **Simplicity of Use** | 中 | 高 | 高 |
+| **API** | 基本 | 充実 | 充実 |
 
-## Conclusion
+## 結論
 
-While these solutions work, they won’t be effective if the target web pages rely on JavaScript for rendering. In such cases, simple HTML parsing approaches like those above won’t suffice. Instead, you'll need a fully-featured scraping browser with advanced HTML parsing capabilities, such as [Scraping Browser](https://brightdata.com/products/scraping-browser).
+これらのソリューションは動作しますが、ターゲットのWebページがレンダリングにJavaScriptを依存している場合は効果的ではありません。そのようなケースでは、上記のようなシンプルなHTMLパース手法だけでは不十分です。代わりに、[Scraping Browser](https://brightdata.jp/products/scraping-browser)のような、高度なHTMLパース機能を備えたフル機能のスクレイピングブラウザが必要になります。
 
-If you want to bypass HTML parsing and access structured data instantly, explore our [ready-to-use datasets](https://brightdata.com/products/datasets), covering hundreds of websites!
+HTMLパースを省略して構造化データへ即時アクセスしたい場合は、数百のWebサイトを網羅する[すぐに使えるデータセット](https://brightdata.jp/products/datasets)をご覧ください。
 
-Create a Bright Data account today and start testing our data and scraping solutions with a free trial! 
+今すぐBright Dataアカウントを作成し、無料トライアルで当社のデータおよびスクレイピングソリューションのテストを開始しましょう！
