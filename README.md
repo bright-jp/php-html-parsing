@@ -1,6 +1,6 @@
 # PHPでのHTMLパース
 
-[![Promo](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.jp/) 
+[![Promo](https://github.com/bright-jp/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.jp/) 
 
 本ガイドでは、PHPでHTMLをパースする3つのテクニックを検証し、それぞれの強みと違いを比較します。
 
@@ -137,7 +137,7 @@ echo $html;
 
 cURLを使って事前に取得した、[Scrape This Site](https://www.scrapethissite.com/pages/forms/?per_page=100)の「Hockey Teams」ページのHTMLを含む`index.html`というファイルがあると仮定します。
 
-![The index.html file in the project folder](https://github.com/luminati-io/php-html-parsing/blob/main/Images/The-index.html-file-in-the-project-folder-2048x1216.png)
+![The index.html file in the project folder](https://github.com/bright-jp/php-html-parsing/blob/main/Images/The-index.html-file-in-the-project-folder-2048x1216.png)
 
 ## PHPでのHTMLパース：3つのアプローチ
 
@@ -149,7 +149,7 @@ cURLを使って事前に取得した、[Scrape This Site](https://www.scrapethi
 
 いずれのケースでも、ローカルの`index.html`ファイルからHTMLをパースし、ページ上のすべてのホッケーチームのエントリを選択して、そこからデータを抽出します。
 
-![The table on the target page](https://github.com/luminati-io/php-html-parsing/blob/main/Images/The-table-on-the-target-page-2048x1107.png)
+![The table on the target page](https://github.com/bright-jp/php-html-parsing/blob/main/Images/The-table-on-the-target-page-2048x1107.png)
 
 最終結果は、次の詳細を含むスクレイピング済みホッケーチームのエントリ一覧になります。
 
@@ -164,7 +164,7 @@ cURLを使って事前に取得した、[Scrape This Site](https://www.scrapethi
 
 これらは、次の構造を持つHTMLテーブルから抽出できます。
 
-![The HTML DOM structure of the table's rows](https://github.com/luminati-io/php-html-parsing/blob/main/Images/The-HTML-DOM-structure-of-the-tables-rows-2048x1134.png)
+![The HTML DOM structure of the table's rows](https://github.com/bright-jp/php-html-parsing/blob/main/Images/The-HTML-DOM-structure-of-the-tables-rows-2048x1134.png)
 
 テーブル行の各カラムには固有のclassが付いており、classをCSSセレクタとして要素を選択し、テキストとして内容を取得することでデータを抽出できます。
 
